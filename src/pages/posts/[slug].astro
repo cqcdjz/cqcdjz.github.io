@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const dateStr = post.data.pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+<BaseLayout title={`${post.data.title} | 无奈朝来寒雨的博客`} description={post.data.description}>
+  <article class="post">
+    <h1>{post.data.title}</h1>
+    <div class="meta">
+      <time datetime={post.data.pubDate.toISOString()}>{dateStr}</time>
+      {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+    </div>
+    <div class="content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post {
+    padding: 2.5rem 0 3rem;
+  }
+  .post h1 {
+    font-size: 2rem;
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+  }
+  .content :global(h2) {
+    margin-top: 2rem;
+  }
+  .content :global(pre) {
+    padding: 1rem;
+    border-radius: 10px;
+    overflow-x: auto;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--surface-border);
+  }
+  .content :global(code) {
+    font-size: 0.9rem;
+  }
+</style>
