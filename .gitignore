@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# astro
+.astro/
+
+# visual companion / brainstorm scratch
+.superpowers/
+
+# misc
+.DS_Store
+*.log
